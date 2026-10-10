@@ -43,6 +43,7 @@ jobs:
 
   macos-release:
     strategy:
+      fail-fast: false
       matrix:
         os: [macos-15-intel, macos-14]  # Intel and Apple Silicon
     runs-on: ${{ matrix.os }}

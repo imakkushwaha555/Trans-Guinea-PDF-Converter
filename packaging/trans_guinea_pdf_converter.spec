@@ -65,5 +65,5 @@ if sys.platform == "darwin":
         name="Trans-Guinea PDF Converter.app",
         icon=str(project_root / "assets" / "app.icns"),
         bundle_identifier="io.github.imakkushwaha555.transguineapdfconverter",
-        info_plist={"CFBundleShortVersionString": "0.1.0", "NSHighResolutionCapable": True},
+        info_plist={"CFBundleShortVersionString": "0.1.1", "NSHighResolutionCapable": True},
     )
