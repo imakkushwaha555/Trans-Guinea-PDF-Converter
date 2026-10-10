@@ -44,7 +44,7 @@ jobs:
   macos-release:
     strategy:
       matrix:
-        os: [macos-13, macos-14]  # Intel and Apple Silicon
+        os: [macos-15-intel, macos-14]  # Intel and Apple Silicon
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
