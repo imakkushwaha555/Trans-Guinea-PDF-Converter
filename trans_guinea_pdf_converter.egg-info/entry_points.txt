@@ -1,0 +1,2 @@
+[console_scripts]
+trans-guinea-pdf-converter = run:main

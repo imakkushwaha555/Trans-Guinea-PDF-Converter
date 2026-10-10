@@ -1,0 +1,101 @@
+Metadata-Version: 2.4
+Name: trans-guinea-pdf-converter
+Version: 0.1.0
+Summary: A local Flask PDF converter with editable and visual-fidelity Word output.
+Author: Trans-Guinea PDF Converter contributors
+License: MIT License
+        
+        Copyright (c) 2026 Velvet Convert contributors
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: Flask<4,>=3.1
+Requires-Dist: pdf2docx>=0.5.8
+Requires-Dist: pdfplumber<1,>=0.11
+Requires-Dist: pypdf<7,>=5
+Requires-Dist: pandas<3,>=2.2
+Requires-Dist: openpyxl<4,>=3.1
+Requires-Dist: PyMuPDF<2,>=1.24
+Requires-Dist: python-docx<2,>=1.1
+Provides-Extra: dev
+Requires-Dist: pytest<10,>=8; extra == "dev"
+Dynamic: license-file
+
+# Trans-Guinea PDF Converter
+
+Trans-Guinea PDF Converter is a local Flask application for converting PDFs to Word and Excel files. It is designed for privacy: uploaded PDFs are processed locally, passwords are kept in memory, and temporary input files are deleted after each conversion.
+
+## Output modes
+
+- **Editable Word** — uses `pdf2docx` to reconstruct editable text and layout.
+- **Visual-fidelity Word** — renders each PDF page into a page-sized image inside a DOCX. This preserves images, unusual or illegible fonts, spacing, and alignment much more reliably, but the page content is not editable.
+- **Excel tables** — extracts detected tables into separate worksheets. Excel output is intentionally table-focused and is not a complete visual reproduction of a PDF page.
+
+For scanned PDFs, image-only pages, custom fonts, or documents where alignment is more important than editability, use Visual-fidelity Word.
+
+## Requirements
+
+- Python 3.11 or newer
+- Windows, macOS, or Linux
+- 25 MB maximum upload size by default
+
+## Run locally
+
+```bash
+python -m venv .venv
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+# macOS/Linux
+# source .venv/bin/activate
+
+python -m pip install -r requirements.txt
+python run.py
+```
+
+Open `http://127.0.0.1:5000` in a browser.
+
+## Install as a package
+
+```bash
+python -m pip install .
+trans-guinea-pdf-converter
+```
+
+For development and tests:
+
+```bash
+python -m pip install -e ".[dev]"
+python -m pytest
+```
+
+## Security and privacy
+
+- Passwords are never logged or written to disk.
+- Uploaded PDFs are stored under generated random names and removed after conversion.
+- Decrypted working PDFs and rendered page images are temporary and removed immediately.
+- Generated output files remain in `converted/` until manually deleted or cleaned by the operator.
+- This application is intended for local use. Do not expose it to the public internet without adding authentication, rate limiting, HTTPS, and deployment-specific hardening.
+
+See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
