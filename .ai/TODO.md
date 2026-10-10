@@ -5,7 +5,7 @@ Work is split into small pieces. Tick a box only when its check passes (`python 
 ## 0. Privacy purge
 - [x] Remove generated documents from all local Git history and refs
 - [x] Ignore `*.docx`, `*.xlsx`, `*.pdf`, `*.zip` in `.gitignore`
-- [x] Before the first push: `git log --all -- converted` must print nothing (pushed; see STATE.md for current work)
+- [x] Before the first push: `git log --all -- converted` shows only the empty converted/.gitkeep; no .docx/.xlsx/.pdf in history (verified, pushed)
 
 ## 1. Structure
 - [x] `pdf_common.py`: shared validation, password signalling, temp-job helper
