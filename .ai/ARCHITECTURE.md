@@ -4,6 +4,7 @@
 - `pdf_common.py`: header check, `prepare_pdf` (validate + decrypt), `PasswordRequired`, `job_dir()` temp-folder context manager.
 - `tools/convert.py`, `tools/merge.py`, `tools/split.py`: one blueprint each.
 - `templates/`: `base.html` plus one template per page.
+- `run.py`: desktop entry point. Local Werkzeug server plus a pywebview window; `--browser` fallback. See `.ai/STATE.md` for packaging and release state.
 
 ## Privacy rules (never break)
 1. Files only live inside `job_dir()` (system temp, prefix `trans-guinea-job-`), deleted when the request ends.
