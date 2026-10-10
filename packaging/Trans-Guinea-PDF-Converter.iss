@@ -1,6 +1,8 @@
 #define MyAppName "Trans-Guinea PDF Converter"
-#define MyAppPublisher "Trans-Guinea PDF Converter contributors"
-#define MyAppVersion "0.1.1"
+#define MyAppPublisher "IMakKushwaha"
+#ifndef MyAppVersion
+  #define MyAppVersion "0.1.2"
+#endif
 #define MyAppExeName "Trans-Guinea PDF Converter.exe"
 
 [Setup]
@@ -28,6 +30,8 @@ Name: "desktopicon"; Description: "Create a &desktop shortcut"; GroupDescription
 
 [Files]
 Source: "..\dist\Trans-Guinea PDF Converter\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\NOTICE"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\AUTHORS.md"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

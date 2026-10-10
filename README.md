@@ -82,7 +82,7 @@ The `release/` directory will contain a setup executable and a portable ZIP. The
 
 ### GitHub Releases and WinGet
 
-Create a version tag such as `v0.1.1` and push it to GitHub. The release workflow builds the Windows installer and portable ZIP and attaches both to a GitHub Release. The installer URL and its SHA-256 hash can then be used to create a WinGet manifest. WinGet submissions require a stable package identifier/version and installer metadata, including the installer type, download URL, and SHA-256 hash.
+Create a version tag such as `v0.1.2` and push it to GitHub. The release workflow builds the Windows installer and portable ZIP and attaches both to a GitHub Release. The installer URL and its SHA-256 hash can then be used to create a WinGet manifest. WinGet submissions require a stable package identifier/version and installer metadata, including the installer type, download URL, and SHA-256 hash.
 
 ### Advanced install (PowerShell)
 
@@ -135,3 +135,12 @@ See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Attribution
+
+The original Trans-Guinea PDF Converter project is copyright **IMakKushwaha**.
+If you use, redistribute, or substantially modify this project, preserve the
+[LICENSE](LICENSE) and [NOTICE](NOTICE) files and provide reasonable credit to
+**IMakKushwaha** and the **Trans-Guinea PDF Converter contributors** in
+documentation or other accompanying attribution notices. See
+[AUTHORS.md](AUTHORS.md) for the contributor-credit policy.

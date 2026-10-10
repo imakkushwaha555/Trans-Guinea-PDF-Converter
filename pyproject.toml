@@ -4,13 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "trans-guinea-pdf-converter"
-version = "0.1.1"
+version = "0.1.2"
 description = "Free, open-source offline PDF tools: convert PDF to Word or Excel, merge PDFs and split PDFs by page. Private, local processing."
 keywords = ["pdf-converter", "pdf-to-word", "pdf-to-excel", "merge-pdf", "split-pdf", "pdf2docx", "document-converter", "offline", "privacy", "windows"]
 readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
-authors = [{ name = "Trans-Guinea PDF Converter contributors" }]
+authors = [{ name = "IMakKushwaha" }]
+maintainers = [{ name = "IMakKushwaha" }]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Web Environment",

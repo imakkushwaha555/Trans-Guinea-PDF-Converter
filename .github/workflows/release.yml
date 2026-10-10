@@ -10,7 +10,16 @@ permissions:
   contents: write
 
 jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" --repo "${{ github.repository }}" --title "${{ github.ref_name }}" --generate-notes
+
   windows-release:
+    needs: create-release
     runs-on: windows-latest
     steps:
       - name: Check out source
@@ -30,15 +39,19 @@ jobs:
 
       - name: Build executable and installer
         shell: pwsh
+        env:
+          RELEASE_VERSION: ${{ github.ref_name }}
         run: .\packaging\build_windows.ps1
 
       - name: Upload Windows release assets
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload v0.1.1 release/Trans-Guinea-PDF-Converter-Setup-0.1.1.exe release/Trans-Guinea-PDF-Converter-0.1.1-portable.zip release/SHA256SUMS.txt --clobber
+          RELEASE_VERSION: ${{ github.ref_name }}
+        run: gh release upload "$env:RELEASE_VERSION" "release/Trans-Guinea-PDF-Converter-Setup-$($env:RELEASE_VERSION.TrimStart('v')).exe" "release/Trans-Guinea-PDF-Converter-$($env:RELEASE_VERSION.TrimStart('v'))-portable.zip" release/SHA256SUMS.txt --clobber
 
   macos-release:
+    needs: create-release
     strategy:
       fail-fast: false
       matrix:
@@ -52,9 +65,12 @@ jobs:
           python-version: "3.11"
 
       - name: Build app and dmg
+        env:
+          RELEASE_VERSION: ${{ github.ref_name }}
         run: bash packaging/build_macos.sh
 
       - name: Upload macOS release assets
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload v0.1.1 release/*.dmg release/SHA256SUMS-macos-*.txt --clobber
+          RELEASE_VERSION: ${{ github.ref_name }}
+        run: gh release upload "$RELEASE_VERSION" release/*.dmg release/SHA256SUMS-macos-*.txt --clobber

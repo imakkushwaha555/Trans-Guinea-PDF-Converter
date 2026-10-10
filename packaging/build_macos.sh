@@ -2,6 +2,9 @@
 # Builds the macOS .app and a drag-to-Applications .dmg into release/.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+version="${RELEASE_VERSION#v}"
+version="${version:-${GITHUB_REF_NAME#v}}"
+version="${version:-0.1.2}"
 
 python3 -m pip install --upgrade pip
 python3 -m pip install ".[build]"
@@ -10,7 +13,7 @@ python3 -m PyInstaller --noconfirm --clean packaging/trans_guinea_pdf_converter.
 
 arch="$(uname -m)"
 mkdir -p release
-dmg="release/Trans-Guinea-PDF-Converter-0.1.1-macos-${arch}.dmg"
+dmg="release/Trans-Guinea-PDF-Converter-${version}-macos-${arch}.dmg"
 rm -f "$dmg"
 stage="$(mktemp -d)"
 cp -R "dist/Trans-Guinea PDF Converter.app" "$stage/"

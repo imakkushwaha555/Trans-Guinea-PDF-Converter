@@ -2,6 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $projectRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $projectRoot
+$version = if ($env:RELEASE_VERSION) { $env:RELEASE_VERSION.TrimStart("v") } elseif ($env:GITHUB_REF_NAME) { $env:GITHUB_REF_NAME.TrimStart("v") } else { "0.1.2" }
 
 if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
     throw "Python 3.11+ is required to build the Windows package."
@@ -14,7 +15,7 @@ python -m PyInstaller --noconfirm --clean packaging/trans_guinea_pdf_converter.s
 
 $releaseDir = Join-Path $projectRoot "release"
 New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
-$zipPath = Join-Path $releaseDir "Trans-Guinea-PDF-Converter-0.1.1-portable.zip"
+$zipPath = Join-Path $releaseDir "Trans-Guinea-PDF-Converter-$version-portable.zip"
 if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 Compress-Archive -Path (Join-Path $projectRoot "dist\Trans-Guinea PDF Converter\*") -DestinationPath $zipPath
 
@@ -26,7 +27,7 @@ else {
     $isccPath = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
 }
 if ($isccPath) {
-    & $isccPath (Join-Path $projectRoot "packaging\Trans-Guinea-PDF-Converter.iss")
+    & $isccPath "/DMyAppVersion=$version" (Join-Path $projectRoot "packaging\Trans-Guinea-PDF-Converter.iss")
 } else {
     Write-Warning "Inno Setup is not installed; portable ZIP was created but the installer was skipped."
 }

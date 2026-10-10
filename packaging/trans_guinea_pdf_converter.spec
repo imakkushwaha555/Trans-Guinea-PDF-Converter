@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import sys
 
@@ -5,9 +6,13 @@ from PyInstaller.utils.hooks import collect_all, collect_submodules
 
 
 project_root = Path(SPECPATH).resolve().parent
+release_version = os.environ.get("RELEASE_VERSION", "0.1.2").removeprefix("v")
 datas = [
     (str(project_root / "templates"), "templates"),
     (str(project_root / "static"), "static"),
+    (str(project_root / "LICENSE"), "."),
+    (str(project_root / "NOTICE"), "."),
+    (str(project_root / "AUTHORS.md"), "."),
 ]
 binaries = []
 hiddenimports = []
@@ -65,5 +70,5 @@ if sys.platform == "darwin":
         name="Trans-Guinea PDF Converter.app",
         icon=str(project_root / "assets" / "app.icns"),
         bundle_identifier="io.github.imakkushwaha555.transguineapdfconverter",
-        info_plist={"CFBundleShortVersionString": "0.1.1", "NSHighResolutionCapable": True},
+         info_plist={"CFBundleShortVersionString": release_version, "NSHighResolutionCapable": True},
     )

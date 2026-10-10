@@ -13,3 +13,11 @@ python -m pytest
 5. Describe conversion fidelity limitations clearly in pull requests and documentation.
 
 Please do not submit PDFs containing private or copyrighted material as fixtures. Prefer small synthetic PDFs generated during tests.
+
+## Copyright and attribution
+
+The original project is copyright **IMakKushwaha**. Contributors retain
+copyright in their original contributions unless they agree otherwise in
+writing. Contributions are distributed with the project under the MIT License.
+Please preserve the attribution policy in [AUTHORS.md](AUTHORS.md) and the
+notice in [NOTICE](NOTICE).
