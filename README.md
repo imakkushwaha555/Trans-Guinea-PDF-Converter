@@ -50,7 +50,7 @@ python -m pip install -r requirements.txt
 python run.py
 ```
 
-Open `http://127.0.0.1:5000` in a browser.
+The app opens in its own window (use `python run.py --browser` to open it in your browser instead).
 
 ## Install as a package
 
@@ -82,7 +82,7 @@ The `release/` directory will contain a setup executable and a portable ZIP. The
 
 ### GitHub Releases and WinGet
 
-Create a version tag such as `v0.1.0` and push it to GitHub. The release workflow builds the Windows installer and portable ZIP and attaches both to a GitHub Release. The installer URL and its SHA-256 hash can then be used to create a WinGet manifest. WinGet submissions require a stable package identifier/version and installer metadata, including the installer type, download URL, and SHA-256 hash.
+Create a version tag such as `v0.1.1` and push it to GitHub. The release workflow builds the Windows installer and portable ZIP and attaches both to a GitHub Release. The installer URL and its SHA-256 hash can then be used to create a WinGet manifest. WinGet submissions require a stable package identifier/version and installer metadata, including the installer type, download URL, and SHA-256 hash.
 
 ### Advanced install (PowerShell)
 

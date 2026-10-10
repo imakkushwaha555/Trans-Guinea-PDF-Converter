@@ -37,8 +37,8 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            release/Trans-Guinea-PDF-Converter-Setup-0.1.0.exe
-            release/Trans-Guinea-PDF-Converter-0.1.0-portable.zip
+            release/Trans-Guinea-PDF-Converter-Setup-0.1.1.exe
+            release/Trans-Guinea-PDF-Converter-0.1.1-portable.zip
             release/SHA256SUMS.txt
 
   macos-release:

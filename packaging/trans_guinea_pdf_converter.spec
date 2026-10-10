@@ -12,7 +12,7 @@ datas = [
 binaries = []
 hiddenimports = []
 
-for package_name in ("pdf2docx", "pdfplumber", "pymupdf", "pandas", "openpyxl", "docx"):
+for package_name in ("pdf2docx", "pdfplumber", "pymupdf", "pandas", "openpyxl", "docx", "webview"):
     package_datas, package_binaries, package_hiddenimports = collect_all(package_name)
     datas.extend(package_datas)
     binaries.extend(package_binaries)

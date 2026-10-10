@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.6.0.schema.json
 PackageIdentifier: imakkushwaha555.TransGuineaPDFConverter
-PackageVersion: 0.1.0
+PackageVersion: 0.1.1
 InstallerType: inno
 Scope: user
 InstallModes:
@@ -9,7 +9,7 @@ InstallModes:
 UpgradeBehavior: install
 Installers:
 - Architecture: x64
-  InstallerUrl: https://github.com/imakkushwaha555/trans-guinea-pdf-converter/releases/download/v0.1.0/Trans-Guinea-PDF-Converter-Setup-0.1.0.exe
+  InstallerUrl: https://github.com/imakkushwaha555/trans-guinea-pdf-converter/releases/download/v0.1.1/Trans-Guinea-PDF-Converter-Setup-0.1.1.exe
   InstallerSha256: 2DB41530A264BEE8D9F6324E12977082E880576E23675539F53F55EAA2AB810C
 ManifestType: installer
 ManifestVersion: 1.6.0

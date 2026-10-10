@@ -10,7 +10,7 @@ python3 -m PyInstaller --noconfirm --clean packaging/trans_guinea_pdf_converter.
 
 arch="$(uname -m)"
 mkdir -p release
-dmg="release/Trans-Guinea-PDF-Converter-0.1.0-macos-${arch}.dmg"
+dmg="release/Trans-Guinea-PDF-Converter-0.1.1-macos-${arch}.dmg"
 rm -f "$dmg"
 stage="$(mktemp -d)"
 cp -R "dist/Trans-Guinea PDF Converter.app" "$stage/"

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "trans-guinea-pdf-converter"
-version = "0.1.0"
+version = "0.1.1"
 description = "Free, open-source offline PDF tools: convert PDF to Word or Excel, merge PDFs and split PDFs by page. Private, local processing."
 keywords = ["pdf-converter", "pdf-to-word", "pdf-to-excel", "merge-pdf", "split-pdf", "pdf2docx", "document-converter", "offline", "privacy", "windows"]
 readme = "README.md"
@@ -30,6 +30,7 @@ dependencies = [
     "openpyxl>=3.1,<4",
     "PyMuPDF>=1.24,<2",
     "python-docx>=1.1,<2",
+    "pywebview>=5.3,<7",
 ]
 
 [project.urls]

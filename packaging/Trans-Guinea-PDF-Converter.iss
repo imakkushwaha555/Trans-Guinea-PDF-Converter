@@ -1,6 +1,6 @@
 #define MyAppName "Trans-Guinea PDF Converter"
 #define MyAppPublisher "Trans-Guinea PDF Converter contributors"
-#define MyAppVersion "0.1.0"
+#define MyAppVersion "0.1.1"
 #define MyAppExeName "Trans-Guinea PDF Converter.exe"
 
 [Setup]

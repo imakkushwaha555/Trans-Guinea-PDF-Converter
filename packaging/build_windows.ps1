@@ -14,7 +14,7 @@ python -m PyInstaller --noconfirm --clean packaging/trans_guinea_pdf_converter.s
 
 $releaseDir = Join-Path $projectRoot "release"
 New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
-$zipPath = Join-Path $releaseDir "Trans-Guinea-PDF-Converter-0.1.0-portable.zip"
+$zipPath = Join-Path $releaseDir "Trans-Guinea-PDF-Converter-0.1.1-portable.zip"
 if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 Compress-Archive -Path (Join-Path $projectRoot "dist\Trans-Guinea PDF Converter\*") -DestinationPath $zipPath
 
