@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys
 
 from PyInstaller.utils.hooks import collect_all, collect_submodules
 
@@ -36,16 +37,16 @@ pyz = PYZ(analysis.pure)
 executable = EXE(
     pyz,
     analysis.scripts,
-    analysis.binaries,
-    analysis.datas,
     [],
+    exclude_binaries=True,
     name="Trans-Guinea PDF Converter",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=False,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
+    icon=str(project_root / "assets" / ("app.icns" if sys.platform == "darwin" else "app.ico")),
 )
 
 collection = COLLECT(
@@ -57,3 +58,12 @@ collection = COLLECT(
     upx_exclude=[],
     name="Trans-Guinea PDF Converter",
 )
+
+if sys.platform == "darwin":
+    app_bundle = BUNDLE(
+        collection,
+        name="Trans-Guinea PDF Converter.app",
+        icon=str(project_root / "assets" / "app.icns"),
+        bundle_identifier="io.github.imakkushwaha555.transguineapdfconverter",
+        info_plist={"CFBundleShortVersionString": "0.1.0", "NSHighResolutionCapable": True},
+    )

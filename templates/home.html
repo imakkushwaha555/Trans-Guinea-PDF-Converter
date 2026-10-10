@@ -7,6 +7,7 @@
         <p class="eyebrow">What would you like to do?</p>
         <h1 id="page-title">Pick a task to get started.</h1>
         <p class="hero-copy">Convert, merge or split PDF files on your own computer. Nothing is sent to a cloud service and every file is deleted when the job finishes.</p>
+        {% include "_help_search.html" %}
     </div>
 </section>
 
@@ -27,4 +28,7 @@
     <details><summary>Are my PDFs uploaded anywhere?</summary><p>No. Files are processed on this computer in a temporary folder and removed as soon as the job finishes.</p></details>
     <details><summary>What about password-protected PDFs?</summary><p>You are asked for the password in a popup only when it is needed. It is never stored or logged.</p></details>
 </section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='help.js') }}"></script>
 {% endblock %}

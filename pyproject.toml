@@ -48,5 +48,5 @@ testpaths = ["test_app.py"]
 addopts = "-q"
 
 [tool.setuptools]
-py-modules = ["app", "run", "pdf_common"]
+py-modules = ["app", "run", "pdf_common", "help_content"]
 packages = ["tools"]

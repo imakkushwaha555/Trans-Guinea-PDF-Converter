@@ -9,6 +9,7 @@ if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
 
 python -m pip install --upgrade pip
 python -m pip install ".[build]"
+python tools/make_icon.py
 python -m PyInstaller --noconfirm --clean packaging/trans_guinea_pdf_converter.spec
 
 $releaseDir = Join-Path $projectRoot "release"
@@ -23,5 +24,9 @@ if ($iscc) {
 } else {
     Write-Warning "Inno Setup is not installed; portable ZIP was created but the installer was skipped."
 }
+
+Get-ChildItem $releaseDir -File | ForEach-Object {
+    "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash)  $($_.Name)"
+} | Set-Content (Join-Path $releaseDir "SHA256SUMS.txt")
 
 Write-Host "Release artifacts are in $releaseDir"

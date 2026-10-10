@@ -1,4 +1,4 @@
-name: Windows release
+name: Release
 
 on:
   workflow_dispatch:
@@ -39,3 +39,26 @@ jobs:
           files: |
             release/Trans-Guinea-PDF-Converter-Setup-0.1.0.exe
             release/Trans-Guinea-PDF-Converter-0.1.0-portable.zip
+            release/SHA256SUMS.txt
+
+  macos-release:
+    strategy:
+      matrix:
+        os: [macos-13, macos-14]  # Intel and Apple Silicon
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build app and dmg
+        run: bash packaging/build_macos.sh
+
+      - name: Upload to GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/*.dmg
+            release/SHA256SUMS-macos-*.txt

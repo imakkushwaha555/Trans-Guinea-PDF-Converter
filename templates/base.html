@@ -18,6 +18,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{ title }}">
     <meta name="twitter:description" content="{{ description }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script type="application/ld+json">{{ {
         "@context": "https://schema.org",
@@ -36,7 +37,7 @@
 <main class="page-shell">
     <header class="topbar">
         <a class="brand" href="{{ url_for('index') }}">
-            <div class="brand-mark" aria-hidden="true">T</div>
+            <img class="brand-mark" src="{{ url_for('static', filename='logo.png') }}" alt="" width="48" height="48">
             <div>
                 <p class="brand-name">Trans-Guinea PDF Converter</p>
                 <p class="brand-tagline">Free, open-source PDF tools that work offline</p>
@@ -46,6 +47,7 @@
             {% for tool in tools %}
             <a href="{{ tool.path }}"{% if request.path == tool.path %} aria-current="page"{% endif %}>{{ tool.title }}</a>
             {% endfor %}
+            <a href="/help"{% if request.path == '/help' %} aria-current="page"{% endif %}>Help</a>
         </nav>
         <div class="privacy-badge">Private by design</div>
     </header>

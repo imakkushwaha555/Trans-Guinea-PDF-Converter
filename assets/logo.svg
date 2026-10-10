@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Trans-Guinea PDF Converter logo">
+  <rect width="256" height="256" rx="56" fill="#6f1738"/>
+  <polygon points="64,48 150,48 192,90 192,208 64,208" fill="#ffffff"/>
+  <polygon points="150,48 192,90 150,90" fill="#f2b632"/>
+  <rect x="88" y="106" width="80" height="20" fill="#6f1738"/>
+  <rect x="118" y="126" width="20" height="58" fill="#6f1738"/>
+  <rect x="118" y="164" width="42" height="20" fill="#6f1738"/>
+  <polygon points="160,150 186,174 160,198" fill="#f2b632"/>
+</svg>

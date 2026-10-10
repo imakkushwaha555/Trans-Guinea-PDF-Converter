@@ -41,7 +41,7 @@ a { color: var(--wine-700); }
 .page-shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 28px 0 42px; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
 .brand { display: flex; align-items: center; gap: 13px; min-width: 0; color: inherit; text-decoration: none; }
-.brand-mark { display: grid; flex: 0 0 48px; width: 48px; height: 48px; place-items: center; border-radius: 15px; color: #fff; font-size: 1.4rem; font-weight: 800; background: linear-gradient(145deg, #d66b91, var(--wine-700)); box-shadow: 0 10px 24px rgba(111, 23, 56, .22); }
+.brand-mark { flex: 0 0 48px; width: 48px; height: 48px; border-radius: 15px; box-shadow: 0 10px 24px rgba(111, 23, 56, .22); }
 .brand-name { margin: 0; color: var(--wine-900); font-size: 1.28rem; letter-spacing: -.04em; }
 .brand-tagline { margin: 3px 0 0; color: var(--muted); font-size: .86rem; }
 .main-nav { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -167,3 +167,12 @@ footer { margin-top: 26px; color: var(--muted); font-size: .78rem; text-align: c
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.help-search { display: flex; gap: 10px; max-width: 640px; margin-top: 18px; }
+.help-search input { flex: 1; min-width: 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; font: inherit; }
+.help-search .primary { padding: 0 20px; border: 0; border-radius: 12px; color: #fff; background: var(--wine-700); font: inherit; font-weight: 700; cursor: pointer; }
+.help-results { display: grid; gap: 8px; max-width: 640px; margin-top: 10px; }
+.help-result { display: grid; gap: 4px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; color: inherit; text-decoration: none; background: #fff; }
+.help-result strong { color: var(--wine-800); }
+.help-result span, .help-empty { color: var(--muted); font-size: .9rem; line-height: 1.5; }

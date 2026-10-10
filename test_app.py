@@ -272,3 +272,10 @@ def test_split_asks_for_password(client):
     ok = _split(client, locked, mode="ranges", ranges="1", password="secret")
     assert ok.status_code == 200
     assert _job_dirs() == []
+
+def test_help_page_and_search(client):
+    assert client.get("/help").status_code == 200
+    assert b'id="helpSearch"' in client.get("/").data
+    titles = [item["title"] for item in client.get("/help/search?q=password").get_json()]
+    assert "Password-protected PDFs" in titles
+    assert client.get("/help/search?q=").get_json() == []

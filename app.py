@@ -9,6 +9,7 @@ from xml.sax.saxutils import escape
 from flask import Flask, Response, jsonify, render_template, request
 from werkzeug.exceptions import RequestEntityTooLarge
 
+from help_content import ARTICLES, ISSUES_URL, search as search_help
 from pdf_common import MAX_REQUEST_BYTES, purge_leftover_jobs
 from tools import convert, merge, split
 
@@ -83,6 +84,16 @@ def index():
     return render_template("home.html")
 
 
+@app.get("/help")
+def help_page():
+    return render_template("help.html", articles=ARTICLES, issues_url=ISSUES_URL)
+
+
+@app.get("/help/search")
+def help_search():
+    return jsonify(search_help(request.args.get("q", "")[:100]))
+
+
 @app.get("/health")
 def health():
     return jsonify({"status": "ok"})
@@ -98,7 +109,7 @@ def robots():
 def sitemap():
     base = _site_url()
     urls = "".join(
-        f"<url><loc>{escape(base + path)}</loc></url>" for path in ["/", *[tool["path"] for tool in TOOLS]]
+        f"<url><loc>{escape(base + path)}</loc></url>" for path in ["/", "/help", *[tool["path"] for tool in TOOLS]]
     )
     xml = f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>'
     return Response(xml, mimetype="application/xml")

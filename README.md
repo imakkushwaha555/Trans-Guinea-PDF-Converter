@@ -84,6 +84,44 @@ The `release/` directory will contain a setup executable and a portable ZIP. The
 
 Create a version tag such as `v0.1.0` and push it to GitHub. The release workflow builds the Windows installer and portable ZIP and attaches both to a GitHub Release. The installer URL and its SHA-256 hash can then be used to create a WinGet manifest. WinGet submissions require a stable package identifier/version and installer metadata, including the installer type, download URL, and SHA-256 hash.
 
+### Advanced install (PowerShell)
+
+The installer wizard offers a desktop shortcut option. From PowerShell:
+
+```powershell
+# From source: pull the latest code and run it
+git clone https://github.com/imakkushwaha555/trans-guinea-pdf-converter.git
+cd trans-guinea-pdf-converter
+git pull
+python -m pip install .
+trans-guinea-pdf-converter
+
+# From WinGet, once the package is published
+winget install imakkushwaha555.TransGuineaPDFConverter
+
+# Test the local manifest (run once as admin: winget settings --enable LocalManifestFiles)
+winget install --manifest .\packaging\winget
+```
+
+Before submitting to winget-pkgs, replace `InstallerSha256` in `packaging/winget` with the value from the release's `SHA256SUMS.txt`.
+
+## macOS distribution
+
+Release builds ship as a `.dmg` for Apple Silicon (`arm64`) and Intel (`x86_64`): open it and drag the app to Applications. The app is unsigned, so on first launch right-click it and choose Open (or allow it under System Settings > Privacy & Security).
+
+To build locally on a Mac with Python 3.11+:
+
+```bash
+bash packaging/build_macos.sh
+```
+
+From source on macOS or Linux:
+
+```bash
+git clone https://github.com/imakkushwaha555/trans-guinea-pdf-converter.git
+cd trans-guinea-pdf-converter && python3 -m pip install . && trans-guinea-pdf-converter
+```
+
 ## Security and privacy
 
 - Only PDF files are accepted, and each upload is checked for damage before conversion.

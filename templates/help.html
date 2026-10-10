@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% set title = "Help & Support | Trans-Guinea PDF Converter" %}
+{% set description = "Answers to common questions about converting, merging and splitting PDFs, plus how to get support." %}
+{% block content %}
+<section class="hero single" aria-labelledby="page-title">
+    <div>
+        <p class="eyebrow">Help &amp; support</p>
+        <h1 id="page-title">How can we help?</h1>
+        {% include "_help_search.html" %}
+    </div>
+</section>
+
+<section class="faq" aria-label="Help articles">
+    {% for article in articles %}
+    <details id="{{ article.id }}"><summary>{{ article.title }}</summary><p>{{ article.body }}</p></details>
+    {% endfor %}
+</section>
+
+<section class="faq" aria-labelledby="support-title">
+    <h2 id="support-title">Still stuck?</h2>
+    <p>Report a problem or ask a question on <a href="{{ issues_url }}" rel="noopener noreferrer" target="_blank">GitHub Issues</a>. Include your app version, your operating system and the log file described above. Please do not attach private PDFs.</p>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='help.js') }}"></script>
+<script src="{{ url_for('static', filename='help-open.js') }}"></script>
+{% endblock %}
