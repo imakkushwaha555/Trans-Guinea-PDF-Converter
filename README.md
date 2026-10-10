@@ -75,10 +75,10 @@ Create a version tag such as `v0.1.0` and push it to GitHub. The release workflo
 
 ## Security and privacy
 
-- Passwords are never logged or written to disk.
-- Uploaded PDFs are stored under generated random names and removed after conversion.
-- Decrypted working PDFs and rendered page images are temporary and removed immediately.
-- Generated output files remain in `converted/` until manually deleted or cleaned by the operator.
+- Only PDF files are accepted, and each upload is checked for damage before conversion.
+- Passwords are requested in a popup only for protected PDFs, and are never logged or written to disk.
+- Each job runs in a private temporary folder that is deleted as soon as the job finishes, including on errors.
+- The converted file is returned directly to the browser; no copy is kept by the app. Leftover working folders from a crash are purged at startup.
 - This application is intended for local use. Do not expose it to the public internet without adding authentication, rate limiting, HTTPS, and deployment-specific hardening.
 
 See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.

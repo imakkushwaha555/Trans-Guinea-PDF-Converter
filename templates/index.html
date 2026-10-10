@@ -92,7 +92,15 @@
         .upload-content > span:not(.upload-icon):not(.file-name) { display: block; margin-top: 8px; color: var(--muted); font-size: .88rem; }
         .file-name { max-width: 100%; margin: 13px auto 0; color: var(--wine-700); font-size: .9rem; font-weight: 750; overflow-wrap: anywhere; }
 
-        .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 22px; }
+        .form-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; margin-top: 22px; }
+        dialog { width: min(420px, calc(100% - 32px)); padding: 26px; color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius-md); box-shadow: var(--shadow); }
+        dialog::backdrop { background: rgba(63, 12, 34, .45); }
+        dialog h3 { margin: 0 0 8px; color: var(--wine-900); }
+        dialog p { margin: 0 0 16px; color: var(--muted); font-size: .88rem; line-height: 1.5; }
+        .dialog-error { min-height: 1.2em; margin: 8px 0 0; color: var(--danger); font-size: .82rem; }
+        .dialog-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+        .dialog-actions .secondary { color: var(--wine-700); border: 1px solid var(--rose-200); background: #fff; }
+        .dialog-actions .primary { color: #fff; background: var(--wine-700); }
         .field { min-width: 0; }
         .field label { display: block; margin-bottom: 8px; color: var(--ink); font-size: .86rem; font-weight: 800; }
         .optional { color: var(--muted); font-weight: 500; }
@@ -210,11 +218,6 @@
                         </select>
                         <p class="hint">Visual-fidelity mode preserves images, unusual fonts, spacing, and alignment as page images.</p>
                     </div>
-                    <div class="field">
-                        <label for="password">PDF password <span class="optional">(optional)</span></label>
-                        <input id="password" name="password" type="password" autocomplete="off" placeholder="Only if protected">
-                        <p class="hint">If your PDF is locked, enter its password here.</p>
-                    </div>
                 </div>
 
                 <div class="actions">
@@ -236,15 +239,28 @@
                 <h3>What happens to your file?</h3>
                 <ul class="feature-list">
                     <li>Files are processed on this computer.</li>
-                    <li>Passwords stay in memory and are never logged.</li>
-                    <li>Temporary uploads are removed after conversion.</li>
+                    <li>Only PDF files are accepted and checked for damage.</li>
+                    <li>Passwords are requested only when needed and are never stored or logged.</li>
+                    <li>Uploads and results are deleted as soon as the job finishes.</li>
                 </ul>
             </div>
         </aside>
     </section>
 
-    <footer>Your files are processed locally and temporary uploads are removed after conversion.</footer>
+    <footer>Your files are processed locally and removed as soon as the conversion finishes.</footer>
 </main>
+<dialog id="passwordDialog" aria-labelledby="passwordTitle">
+    <form method="dialog" id="passwordForm">
+        <h3 id="passwordTitle">Password required</h3>
+        <p>This PDF is protected. Enter its password to continue. It is used only for this conversion.</p>
+        <input id="password" type="password" autocomplete="off" aria-label="PDF password" required>
+        <p class="dialog-error" id="passwordError" role="alert"></p>
+        <div class="dialog-actions">
+            <button type="button" class="secondary" id="passwordCancel">Cancel</button>
+            <button type="submit" class="primary">Unlock</button>
+        </div>
+    </form>
+</dialog>
 <script>
 const form = document.getElementById('uploadForm');
 const fileInput = document.getElementById('file');
@@ -254,11 +270,60 @@ const status = document.getElementById('status');
 const submitBtn = document.getElementById('submitBtn');
 const resetBtn = document.getElementById('resetBtn');
 
+const passwordDialog = document.getElementById('passwordDialog');
+const passwordForm = document.getElementById('passwordForm');
+const passwordInput = document.getElementById('password');
+const passwordError = document.getElementById('passwordError');
+
 function showFile() {
     fileName.textContent = fileInput.files[0] ? fileInput.files[0].name : '';
 }
 
-fileInput.addEventListener('change', showFile);
+function isPdf(file) {
+    return file && file.name.toLowerCase().endsWith('.pdf');
+}
+
+function askPassword(message) {
+    return new Promise(resolve => {
+        passwordError.textContent = message || '';
+        passwordInput.value = '';
+        const finish = value => {
+            passwordForm.removeEventListener('submit', onSubmit);
+            passwordDialog.removeEventListener('cancel', onCancel);
+            document.getElementById('passwordCancel').removeEventListener('click', onCancel);
+            passwordDialog.close();
+            passwordInput.value = '';
+            resolve(value);
+        };
+        const onSubmit = event => { event.preventDefault(); finish(passwordInput.value); };
+        const onCancel = event => { event.preventDefault(); finish(null); };
+        passwordForm.addEventListener('submit', onSubmit);
+        passwordDialog.addEventListener('cancel', onCancel);
+        document.getElementById('passwordCancel').addEventListener('click', onCancel);
+        passwordDialog.showModal();
+        passwordInput.focus();
+    });
+}
+
+function saveBlob(blob, name) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+fileInput.addEventListener('change', () => {
+    if (fileInput.files.length && !isPdf(fileInput.files[0])) {
+        fileInput.value = '';
+        status.className = 'status error';
+        status.textContent = 'Only PDF files are supported.';
+    }
+    showFile();
+});
 ['dragenter', 'dragover'].forEach(type => dropzone.addEventListener(type, event => {
     event.preventDefault();
     dropzone.classList.add('dragover');
@@ -268,10 +333,15 @@ fileInput.addEventListener('change', showFile);
     dropzone.classList.remove('dragover');
 }));
 dropzone.addEventListener('drop', event => {
-    if (event.dataTransfer.files.length) {
-        fileInput.files = event.dataTransfer.files;
-        showFile();
+    const file = event.dataTransfer.files[0];
+    if (!file) return;
+    if (!isPdf(file)) {
+        status.className = 'status error';
+        status.textContent = 'Only PDF files are supported.';
+        return;
     }
+    fileInput.files = event.dataTransfer.files;
+    showFile();
 });
 
 form.addEventListener('submit', async event => {
@@ -284,18 +354,41 @@ form.addEventListener('submit', async event => {
     status.innerHTML = '<span class="spinner"></span>Converting securely on your computer…';
     submitBtn.disabled = true;
     resetBtn.style.display = 'none';
+    let password = null;
     try {
-        const response = await fetch('/convert', { method: 'POST', body: new FormData(form) });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Conversion failed.');
-        status.className = 'status success';
-        const warnings = (data.warnings || []).map(warning => `<div>${warning}</div>`).join('');
-        status.innerHTML = `Done — <a class="download-link" href="${data.download_url}">Download ${data.filename}</a>${warnings}`;
-        resetBtn.style.display = 'inline-block';
+        while (true) {
+            const body = new FormData(form);
+            if (password !== null) body.set('password', password);
+            const response = await fetch('/convert', { method: 'POST', body });
+            if (response.ok) {
+                const warnings = JSON.parse(decodeURIComponent(response.headers.get('X-Conversion-Warnings') || '[]'));
+                const disposition = response.headers.get('Content-Disposition') || '';
+                const match = /filename\*?=(?:UTF-8'')?"?([^";]+)/i.exec(disposition);
+                const name = match ? decodeURIComponent(match[1]) : 'converted-file';
+                saveBlob(await response.blob(), name);
+                status.className = 'status success';
+                status.textContent = `Done — ${name} was downloaded. No copy of your file was kept.`;
+                warnings.forEach(warning => {
+                    const note = document.createElement('div');
+                    note.textContent = warning;
+                    status.appendChild(note);
+                });
+                resetBtn.style.display = 'inline-block';
+                return;
+            }
+            const data = await response.json();
+            if (data.password_required) {
+                password = await askPassword(data.incorrect ? data.error : '');
+                if (password === null) throw new Error('Conversion cancelled. The PDF is password protected.');
+                continue;
+            }
+            throw new Error(data.error || 'Conversion failed.');
+        }
     } catch (error) {
         status.className = 'status error';
         status.textContent = error.message;
     } finally {
+        password = null;
         submitBtn.disabled = false;
     }
 });

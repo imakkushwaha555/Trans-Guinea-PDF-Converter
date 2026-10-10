@@ -1,11 +1,12 @@
 import io
+import tempfile
 from pathlib import Path
 
 import pymupdf
 import pytest
 from docx import Document
 
-from app import _convert_to_visual_docx, app
+from app import TEMP_PREFIX, _convert_to_visual_docx, app
 
 
 @pytest.fixture()
@@ -43,26 +44,67 @@ def test_rejects_non_pdf(client):
     assert "Only PDF" in response.json["error"]
 
 
-def test_password_protected_pdf_requests_password(client, monkeypatch, tmp_path):
-    monkeypatch.setattr("app.UPLOAD_FOLDER", tmp_path)
+def _make_pdf(password=None, pages=1):
+    pdf = pymupdf.open()
+    for index in range(pages):
+        pdf.new_page().insert_text((72, 90), f"Page {index + 1} sample text", fontsize=14)
+    buffer = io.BytesIO()
+    if password:
+        pdf.save(buffer, encryption=pymupdf.PDF_ENCRYPT_AES_256, user_pw=password, owner_pw=password)
+    else:
+        pdf.save(buffer)
+    pdf.close()
+    return buffer.getvalue()
 
-    class EncryptedReader:
-        is_encrypted = True
 
-        def __init__(self, *_args, **_kwargs):
-            pass
+def _post(client, data, name="sample.pdf", fmt="docx", password=None):
+    form = {"format": fmt, "file": (io.BytesIO(data), name)}
+    if password is not None:
+        form["password"] = password
+    return client.post("/convert", data=form, content_type="multipart/form-data")
 
-        def decrypt(self, _password):
-            return 0
 
-    monkeypatch.setattr("app.PdfReader", EncryptedReader)
-    response = client.post(
-        "/convert",
-        data={"format": "docx", "file": (io.BytesIO(b"%PDF-1.7"), "locked.pdf")},
-        content_type="multipart/form-data",
-    )
+def _job_dirs():
+    return list(Path(tempfile.gettempdir()).glob(f"{TEMP_PREFIX}*"))
+
+
+def test_password_protected_pdf_requests_password(client):
+    response = _post(client, _make_pdf("secret"), "locked.pdf")
+    assert response.status_code == 401
+    assert response.json["password_required"] is True
+    assert response.json["incorrect"] is False
+
+
+def test_wrong_password_is_flagged(client):
+    response = _post(client, _make_pdf("secret"), "locked.pdf", password="nope")
+    assert response.status_code == 401
+    assert response.json["incorrect"] is True
+
+
+def test_correct_password_returns_file_and_cleans_up(client):
+    response = _post(client, _make_pdf("secret"), "locked.pdf", password="secret")
+    assert response.status_code == 200
+    assert response.headers["Content-Disposition"].startswith("attachment")
+    assert Document(io.BytesIO(response.data)).paragraphs is not None
+    assert _job_dirs() == []
+
+
+def test_corrupted_pdf_is_rejected_and_cleaned_up(client):
+    response = _post(client, b"%PDF-1.7\n1 0 obj\n<< broken", "broken.pdf")
     assert response.status_code == 400
-    assert "password protected" in response.json["error"]
+    assert "damaged" in response.json["error"]
+    assert _job_dirs() == []
+
+
+def test_non_pdf_content_with_pdf_name_is_rejected(client):
+    response = _post(client, b"plain text, not a pdf", "fake.pdf")
+    assert response.status_code == 400
+    assert "not a valid PDF" in response.json["error"]
+    assert _job_dirs() == []
+
+
+def test_download_route_is_gone(client):
+    assert client.get("/download/anything.docx").status_code == 404
 
 
 def test_rejects_unknown_format(client):

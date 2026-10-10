@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import json
 import logging
-import os
-import secrets
+import shutil
 import sys
 import tempfile
+from io import BytesIO
 from pathlib import Path
+from urllib.parse import quote
 
 import pandas as pd
 import pymupdf
@@ -13,7 +15,7 @@ import pdfplumber
 from docx import Document
 from docx.enum.section import WD_SECTION
 from docx.shared import Inches, Pt
-from flask import Flask, jsonify, render_template, request, send_from_directory
+from flask import Flask, jsonify, render_template, request, send_file
 from pdf2docx import Converter
 from pypdf import PdfReader, PdfWriter
 from werkzeug.exceptions import RequestEntityTooLarge
@@ -22,27 +24,25 @@ from werkzeug.utils import secure_filename
 
 BASE_DIR = Path(__file__).resolve().parent
 RESOURCE_DIR = Path(getattr(sys, "_MEIPASS", BASE_DIR))
-APP_DATA_DIR = Path(
-    os.environ.get(
-        "TRANS_GUINEA_DATA_DIR",
-        Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
-        / "Trans-Guinea PDF Converter",
-    )
-)
-UPLOAD_FOLDER = APP_DATA_DIR / "uploads"
-CONVERTED_FOLDER = APP_DATA_DIR / "converted"
 ALLOWED_FORMATS = {"docx", "docx_visual", "xlsx"}
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024
+TEMP_PREFIX = "trans-guinea-job-"
+MIME_TYPES = {
+    "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+}
 
-UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
-CONVERTED_FOLDER.mkdir(parents=True, exist_ok=True)
+
+def _purge_leftover_jobs() -> None:
+    """Remove working folders left behind by a previous crash."""
+    for leftover in Path(tempfile.gettempdir()).glob(f"{TEMP_PREFIX}*"):
+        shutil.rmtree(leftover, ignore_errors=True)
+
+
+_purge_leftover_jobs()
 
 app = Flask(__name__, template_folder=str(RESOURCE_DIR / "templates"))
-app.config.update(
-    MAX_CONTENT_LENGTH=MAX_UPLOAD_BYTES,
-    UPLOAD_FOLDER=UPLOAD_FOLDER,
-    CONVERTED_FOLDER=CONVERTED_FOLDER,
-)
+app.config.update(MAX_CONTENT_LENGTH=MAX_UPLOAD_BYTES)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -51,58 +51,72 @@ class ConversionError(Exception):
     """An expected error that can be safely shown to the user."""
 
 
-def _is_pdf(path: Path) -> bool:
+class PasswordRequired(ConversionError):
+    """The PDF is encrypted and needs a (correct) password."""
+
+    def __init__(self, message: str, incorrect: bool = False):
+        super().__init__(message)
+        self.incorrect = incorrect
+
+
+def _has_pdf_header(path: Path) -> bool:
     try:
         with path.open("rb") as file_handle:
-            return file_handle.read(5) == b"%PDF-"
+            return b"%PDF-" in file_handle.read(1024)
     except OSError:
         return False
 
 
 def _safe_output_name(original_name: str, extension: str) -> str:
     stem = Path(secure_filename(original_name)).stem or "converted-document"
-    return f"{stem}-{secrets.token_hex(6)}.{extension}"
+    return f"{stem}.{extension}"
 
 
 def _output_extension(target_format: str) -> str:
     return "docx" if target_format in {"docx", "docx_visual"} else "xlsx"
 
 
-def _prepare_pdf(pdf_path: Path, password: str | None) -> Path:
+DAMAGED_MESSAGE = "The uploaded PDF could not be read. The file appears to be damaged or unsupported."
+
+
+def _prepare_pdf(pdf_path: Path, password: str | None, work_dir: Path) -> Path:
+    """Validate the PDF and return a readable (decrypted if needed) copy inside work_dir."""
     try:
         reader = PdfReader(str(pdf_path), strict=False)
-        if not reader.is_encrypted:
-            return pdf_path
-        if not password:
-            raise ConversionError("This PDF is password protected. Enter its password and try again.")
-        if reader.decrypt(password) == 0:
-            raise ConversionError("The PDF password is incorrect. Please check it and try again.")
-        writer = PdfWriter()
-        for page in reader.pages:
-            writer.add_page(page)
-        decrypted_handle = tempfile.NamedTemporaryFile(
-            mode="wb", suffix=".pdf", prefix="trans-guinea-convert-", delete=False
-        )
-        decrypted_path = Path(decrypted_handle.name)
-        try:
-            writer.write(decrypted_handle)
-        finally:
-            decrypted_handle.close()
-        return decrypted_path
+        usable_path = pdf_path
+        if reader.is_encrypted:
+            if not password:
+                raise PasswordRequired("This PDF is password protected.")
+            if reader.decrypt(password) == 0:
+                raise PasswordRequired("The password is incorrect. Please try again.", incorrect=True)
+            usable_path = work_dir / "decrypted.pdf"
+        if not len(reader.pages):
+            raise ConversionError(DAMAGED_MESSAGE)
+        if usable_path != pdf_path:
+            writer = PdfWriter()
+            for page in reader.pages:
+                writer.add_page(page)
+            with usable_path.open("wb") as handle:
+                writer.write(handle)
+
+        with pymupdf.open(str(usable_path)) as document:
+            if document.needs_pass or document.page_count < 1:
+                raise ConversionError(DAMAGED_MESSAGE)
+            for page in document:
+                page.get_text("text")
+            document.load_page(0).get_pixmap(matrix=pymupdf.Matrix(0.2, 0.2))
+        return usable_path
     except ConversionError:
         raise
     except Exception as exc:
-        logger.exception("Unable to inspect uploaded PDF")
-        raise ConversionError("The uploaded PDF could not be opened. It may be damaged or unsupported.") from exc
+        logger.warning("PDF validation failed: %s", type(exc).__name__)
+        raise ConversionError(DAMAGED_MESSAGE) from exc
 
 
-def _convert_to_docx(pdf_path: Path, output_path: Path, password: str | None) -> None:
+def _convert_to_docx(pdf_path: Path, output_path: Path) -> None:
     converter = None
     try:
-        try:
-            converter = Converter(str(pdf_path), password=password)
-        except TypeError:
-            converter = Converter(str(pdf_path))
+        converter = Converter(str(pdf_path))
         converter.convert(str(output_path), start=0, end=None)
     finally:
         if converter is not None:
@@ -156,23 +170,14 @@ def _convert_to_visual_docx(pdf_path: Path, output_path: Path) -> None:
             section.right_margin = Inches(0)
 
             pixmap = page.get_pixmap(matrix=pymupdf.Matrix(2, 2), alpha=False)
-            image_handle = tempfile.NamedTemporaryFile(
-                suffix=".png", prefix="trans-guinea-page-", delete=False
-            )
-            image_path = Path(image_handle.name)
-            image_handle.close()
-            try:
-                pixmap.save(str(image_path))
-                document.add_picture(str(image_path), width=Pt(width_points))
-            finally:
-                image_path.unlink(missing_ok=True)
+            document.add_picture(BytesIO(pixmap.tobytes("png")), width=Pt(width_points))
     document.save(str(output_path))
 
 
-def _convert_to_xlsx(pdf_path: Path, output_path: Path, password: str | None) -> None:
+def _convert_to_xlsx(pdf_path: Path, output_path: Path) -> None:
     tables: list[tuple[int, pd.DataFrame]] = []
     try:
-        with pdfplumber.open(str(pdf_path), password=password) as pdf:
+        with pdfplumber.open(str(pdf_path)) as pdf:
             for page_number, page in enumerate(pdf.pages, start=1):
                 table = page.extract_table()
                 if not table or len(table) < 2:
@@ -182,10 +187,7 @@ def _convert_to_xlsx(pdf_path: Path, output_path: Path, password: str | None) ->
                 frame = frame.loc[:, ~frame.columns.duplicated()]
                 tables.append((page_number, frame))
     except Exception as exc:
-        message = str(exc).lower()
-        if "password" in message or "decrypt" in message:
-            raise ConversionError("The PDF password is incorrect. Please check it and try again.") from exc
-        raise
+        raise ConversionError(DAMAGED_MESSAGE) from exc
 
     if not tables:
         raise ConversionError("No tables were found in this PDF for Excel conversion.")
@@ -227,45 +229,50 @@ def convert():
     if not original_name.lower().endswith(".pdf"):
         return jsonify({"error": "Only PDF files are supported."}), 400
 
-    token = secrets.token_hex(12)
-    pdf_path = UPLOAD_FOLDER / f"{token}.pdf"
     output_name = _safe_output_name(original_name, _output_extension(target_format))
-    output_path = CONVERTED_FOLDER / output_name
-    conversion_path = pdf_path
+    output_kind = _output_extension(target_format)
 
     try:
-        uploaded_file.save(pdf_path)
-        if not _is_pdf(pdf_path):
-            raise ConversionError("The uploaded file is not a valid PDF.")
-        conversion_path = _prepare_pdf(pdf_path, password)
+        with tempfile.TemporaryDirectory(prefix=TEMP_PREFIX, ignore_cleanup_errors=True) as work:
+            work_dir = Path(work)
+            pdf_path = work_dir / "upload.pdf"
+            output_path = work_dir / f"output.{output_kind}"
+            uploaded_file.save(pdf_path)
+            if not _has_pdf_header(pdf_path):
+                raise ConversionError("The uploaded file is not a valid PDF.")
+            conversion_path = _prepare_pdf(pdf_path, password, work_dir)
 
-        warnings = _analyze_pdf(conversion_path)
-        if target_format == "docx":
-            _convert_to_docx(conversion_path, output_path, None)
-        elif target_format == "docx_visual":
-            _convert_to_visual_docx(conversion_path, output_path)
-        else:
-            _convert_to_xlsx(conversion_path, output_path, None)
+            warnings = _analyze_pdf(conversion_path)
+            if target_format == "docx":
+                _convert_to_docx(conversion_path, output_path)
+            elif target_format == "docx_visual":
+                _convert_to_visual_docx(conversion_path, output_path)
+            else:
+                _convert_to_xlsx(conversion_path, output_path)
+            result = output_path.read_bytes()
 
-        return jsonify({
-            "download_url": f"/download/{output_name}",
-            "filename": output_name,
-            "warnings": warnings,
-        })
+        response = send_file(
+            BytesIO(result),
+            mimetype=MIME_TYPES[output_kind],
+            as_attachment=True,
+            download_name=output_name,
+        )
+        response.headers["X-Conversion-Warnings"] = quote(json.dumps(warnings))
+        response.headers["Cache-Control"] = "no-store"
+        return response
+    except PasswordRequired as exc:
+        return jsonify({"password_required": True, "incorrect": exc.incorrect, "error": str(exc)}), 401
     except ConversionError as exc:
         return jsonify({"error": str(exc)}), 400
     except Exception:
-        logger.exception("Conversion failed for %s", original_name)
+        logger.exception("Conversion failed")
         return jsonify({"error": "Conversion failed. Please check the PDF and try again."}), 500
-    finally:
-        pdf_path.unlink(missing_ok=True)
-        if conversion_path != pdf_path:
-            conversion_path.unlink(missing_ok=True)
 
 
-@app.route("/download/<path:filename>")
-def download(filename):
-    return send_from_directory(CONVERTED_FOLDER, filename, as_attachment=True)
+@app.after_request
+def disable_caching(response):
+    response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 if __name__ == "__main__":
