@@ -132,6 +132,15 @@ cd trans-guinea-pdf-converter && python3 -m pip install . && trans-guinea-pdf-co
 
 See [SECURITY.md](SECURITY.md) for reporting vulnerabilities.
 
+## Community and accessibility
+
+Please read the [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
+Accessibility goals, supported environments, known limitations, and barrier
+reporting are documented in [ACCESSIBILITY.md](ACCESSIBILITY.md). Bug reports,
+feature requests, and pull requests use the templates in `.github` so that
+reports include useful context without exposing private documents or
+credentials.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
