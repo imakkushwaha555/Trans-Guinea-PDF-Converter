@@ -21,4 +21,5 @@ converted/*
 *.zip
 *.code-workspace
 build.log
+.ai/
 
