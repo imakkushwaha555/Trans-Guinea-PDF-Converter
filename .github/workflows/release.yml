@@ -32,15 +32,11 @@ jobs:
         shell: pwsh
         run: .\packaging\build_windows.ps1
 
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          overwrite_files: true
-          files: |
-            release/Trans-Guinea-PDF-Converter-Setup-0.1.1.exe
-            release/Trans-Guinea-PDF-Converter-0.1.1-portable.zip
-            release/SHA256SUMS.txt
+      - name: Upload Windows release assets
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload v0.1.1 release/Trans-Guinea-PDF-Converter-Setup-0.1.1.exe release/Trans-Guinea-PDF-Converter-0.1.1-portable.zip release/SHA256SUMS.txt --clobber
 
   macos-release:
     strategy:
@@ -58,10 +54,7 @@ jobs:
       - name: Build app and dmg
         run: bash packaging/build_macos.sh
 
-      - name: Upload to GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          overwrite_files: true
-          files: |
-            release/*.dmg
-            release/SHA256SUMS-macos-*.txt
+      - name: Upload macOS release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload v0.1.1 release/*.dmg release/SHA256SUMS-macos-*.txt --clobber
