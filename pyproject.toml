@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trans-guinea-pdf-converter"
+version = "0.1.0"
+description = "Private local PDF converter for converting PDF files to editable Word documents, visual-fidelity Word files, and Excel tables."
+keywords = ["pdf-converter", "pdf-to-word", "pdf-to-excel", "pdf2docx", "document-converter", "offline", "privacy", "windows"]
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Trans-Guinea PDF Converter contributors" }]
+dependencies = [
+    "Flask>=3.1,<4",
+    "pdf2docx>=0.5.8",
+    "pdfplumber>=0.11,<1",
+    "pypdf>=5,<7",
+    "pandas>=2.2,<3",
+    "openpyxl>=3.1,<4",
+    "PyMuPDF>=1.24,<2",
+    "python-docx>=1.1,<2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10"]
+build = ["pyinstaller>=6.10,<7"]
+
+[project.scripts]
+trans-guinea-pdf-converter = "run:main"
+
+[tool.pytest.ini_options]
+testpaths = ["test_app.py"]
+addopts = "-q"
+
+[tool.setuptools]
+py-modules = ["app", "run"]
