@@ -14,6 +14,14 @@ python -m pytest
 
 Please do not submit PDFs containing private or copyrighted material as fixtures. Prefer small synthetic PDFs generated during tests.
 
+## Public-repository hygiene
+
+Do not commit AI/session notes, chat exports, local workspace files, virtual
+environments, dependency directories, build output, release artifacts, logs,
+credentials, private keys, or personal machine paths. The repository ignores
+common examples such as `.ai/`, `chat/`, `node_modules/`, `.venv/`, `build/`,
+`dist/`, `release/`, and `*.log`; check `git status --ignored` before pushing.
+
 ## Copyright and attribution
 
 The original project is copyright **IMakKushwaha**. Contributors retain
