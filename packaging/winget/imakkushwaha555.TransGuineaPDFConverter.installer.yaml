@@ -10,6 +10,6 @@ UpgradeBehavior: install
 Installers:
 - Architecture: x64
   InstallerUrl: https://github.com/imakkushwaha555/trans-guinea-pdf-converter/releases/download/v0.1.1/Trans-Guinea-PDF-Converter-Setup-0.1.1.exe
-  InstallerSha256: 2DB41530A264BEE8D9F6324E12977082E880576E23675539F53F55EAA2AB810C
+  InstallerSha256: 5E8C93E4F9F1A36ADF3B0AAD44CEC89AB2CAD19B74F25284F835390478170BEA
 ManifestType: installer
 ManifestVersion: 1.6.0
