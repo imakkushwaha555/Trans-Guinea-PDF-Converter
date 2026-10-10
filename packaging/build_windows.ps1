@@ -19,13 +19,19 @@ if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 Compress-Archive -Path (Join-Path $projectRoot "dist\Trans-Guinea PDF Converter\*") -DestinationPath $zipPath
 
 $iscc = Get-Command iscc.exe -ErrorAction SilentlyContinue
-if ($iscc) {
-    & $iscc.Source (Join-Path $projectRoot "packaging\Trans-Guinea-PDF-Converter.iss")
+$isccPath = $null
+if ($iscc) { $isccPath = $iscc.Source }
+else {
+    $candidates = @("$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe", "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe", "$env:ProgramFiles\Inno Setup 6\ISCC.exe")
+    $isccPath = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+}
+if ($isccPath) {
+    & $isccPath (Join-Path $projectRoot "packaging\Trans-Guinea-PDF-Converter.iss")
 } else {
     Write-Warning "Inno Setup is not installed; portable ZIP was created but the installer was skipped."
 }
 
-Get-ChildItem $releaseDir -File | ForEach-Object {
+Get-ChildItem $releaseDir -File | Where-Object { $_.Name -ne "SHA256SUMS.txt" } | ForEach-Object {
     "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash)  $($_.Name)"
 } | Set-Content (Join-Path $releaseDir "SHA256SUMS.txt")
 

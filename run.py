@@ -5,9 +5,6 @@ import threading
 import webbrowser
 from pathlib import Path
 
-from app import app
-
-
 def _redirect_streams_if_windowed() -> None:
     # Windowed builds have no console, so stdout/stderr are None.
     if sys.stdout is not None and sys.stderr is not None:
@@ -24,6 +21,8 @@ def _redirect_streams_if_windowed() -> None:
 
 def main() -> None:
     _redirect_streams_if_windowed()
+    from app import app
+
     with socket.socket() as socket_handle:
         socket_handle.bind(("127.0.0.1", 0))
         port = socket_handle.getsockname()[1]
