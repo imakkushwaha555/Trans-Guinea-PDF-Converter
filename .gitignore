@@ -15,3 +15,8 @@ uploads/*
 converted/*
 !uploads/.gitkeep
 !converted/.gitkeep
+*.docx
+*.xlsx
+*.pdf
+*.zip
+*.code-workspace

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% set title = "Free Offline PDF Tools: Convert, Merge and Split PDF | Trans-Guinea" %}
+{% set description = "Free, open-source and privacy-focused PDF tools. Convert PDF to Word or Excel, merge several PDFs into one, and split a PDF by page numbers, all offline without uploading your files." %}
+{% block content %}
+<section class="hero single" aria-labelledby="page-title">
+    <div>
+        <p class="eyebrow">What would you like to do?</p>
+        <h1 id="page-title">Pick a task to get started.</h1>
+        <p class="hero-copy">Convert, merge or split PDF files on your own computer. Nothing is sent to a cloud service and every file is deleted when the job finishes.</p>
+    </div>
+</section>
+
+<section class="task-grid" aria-label="PDF tools">
+    {% for tool in tools %}
+    <a class="task-card" href="{{ tool.path }}">
+        <div class="info-icon" aria-hidden="true">{{ tool.icon }}</div>
+        <h2>{{ tool.title }}</h2>
+        <p>{{ tool.summary }}</p>
+        <span class="go">Open &rarr;</span>
+    </a>
+    {% endfor %}
+</section>
+
+<section class="faq" aria-labelledby="faq-title">
+    <h2 id="faq-title">Questions</h2>
+    <details><summary>Is it really free?</summary><p>Yes. The project is open source under the MIT license and free to use.</p></details>
+    <details><summary>Are my PDFs uploaded anywhere?</summary><p>No. Files are processed on this computer in a temporary folder and removed as soon as the job finishes.</p></details>
+    <details><summary>What about password-protected PDFs?</summary><p>You are asked for the password in a popup only when it is needed. It is never stored or logged.</p></details>
+</section>
+{% endblock %}

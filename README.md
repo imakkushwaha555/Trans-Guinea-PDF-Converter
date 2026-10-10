@@ -1,16 +1,27 @@
 # Trans-Guinea PDF Converter
 
-**Trans-Guinea PDF Converter** is a free, privacy-focused PDF converter for Windows and desktop use. Convert PDF files to editable Word documents, visual-fidelity Word documents, or Excel workbooks containing detected tables. Files are processed locally on your computer, so you do not need to upload sensitive documents to an online PDF conversion service.
+**Free, open-source, offline PDF tools: convert PDF to Word or Excel, merge PDFs, and split PDFs by page numbers.** Files are processed locally on your computer, so you never upload sensitive documents to an online PDF service.
+
+## Tools
+
+| Tool | What it does |
+| --- | --- |
+| **Convert** | PDF to editable Word, visual-fidelity Word, or Excel tables |
+| **Merge** | Combine several PDFs into one, in the order you choose |
+| **Split** | Cut a PDF into parts using page numbers such as `1-3, 5, 8-10`, or one file per page |
+
+Password-protected PDFs are supported in every tool: a popup asks for the password only when needed.
 
 ### Why use Trans-Guinea PDF Converter?
 
 - **PDF to Word conversion** for editable text and reconstructed document layout.
 - **Visual-fidelity PDF to Word conversion** for scanned PDFs, images, unusual fonts, spacing, and page alignment.
 - **PDF to Excel conversion** for extracting detected tables into worksheets.
-- **Local and privacy-focused processing** with no cloud upload required.
+- **Merge and split PDF** without any cloud service.
+- **Local and privacy-focused processing**: temporary files only, deleted as soon as the job finishes.
 - **Windows installer and portable release** planned for direct GitHub downloads and WinGet distribution.
 
-Search terms: PDF to Word converter, PDF to Excel converter, offline PDF converter, local PDF converter, privacy-focused document converter, editable Word from PDF, scanned PDF converter, and Windows PDF converter.
+Search terms: PDF to Word converter, PDF to Excel converter, merge PDF, split PDF, offline PDF tools, local PDF converter, privacy-focused document converter, editable Word from PDF, scanned PDF converter, and Windows PDF converter.
 
 ## Output modes
 
@@ -24,7 +35,7 @@ For scanned PDFs, image-only pages, custom fonts, or documents where alignment i
 
 - Python 3.11 or newer
 - Windows, macOS, or Linux
-- 25 MB maximum upload size by default
+- 25 MB maximum per PDF and 100 MB per request (merge accepts up to 20 files)
 
 ## Run locally
 

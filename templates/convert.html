@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% set title = "Convert PDF to Word or Excel Free Offline | Trans-Guinea PDF Converter" %}
+{% set description = "Convert a PDF to an editable Word document, a visual-fidelity Word file or Excel tables for free. Works offline, asks for a password only when needed and deletes your files when done." %}
+{% set keywords = "PDF to Word, PDF to Excel, offline PDF converter, scanned PDF to Word, free PDF converter, privacy" %}
+{% block content %}
+<section class="hero" aria-labelledby="page-title">
+    <div>
+        <p class="eyebrow">Convert</p>
+        <h1 id="page-title">Turn PDFs into editable files.</h1>
+        <p class="hero-copy">Convert a PDF to Word or Excel without sending it to a cloud service. Choose a file, select an output and download the result.</p>
+    </div>
+    <aside class="hero-note">
+        <strong>Pick the right mode</strong>
+        <p>Editable Word is best for changing text. Visual-fidelity Word keeps the exact page look, which suits scans, images and unusual fonts.</p>
+    </aside>
+</section>
+
+<section class="workspace" aria-label="PDF conversion workspace">
+    <div class="panel">
+        <div class="panel-header">
+            <div><p class="panel-kicker">Step 1</p><h2>Upload your PDF</h2></div>
+            <div class="step" aria-hidden="true">1</div>
+        </div>
+        <form id="uploadForm">
+            <label class="dropzone" id="dropzone" for="file">
+                <input id="file" type="file" accept="application/pdf,.pdf">
+                <div class="upload-content">
+                    <span class="upload-icon" aria-hidden="true">&uarr;</span>
+                    <strong>Drop your PDF here</strong>
+                    <span>or click to browse &middot; maximum 25 MB</span>
+                    <span class="file-name" id="fileName"></span>
+                </div>
+            </label>
+            <div class="form-grid">
+                <div class="field">
+                    <label for="format">Convert to</label>
+                    <select id="format">
+                        <option value="docx">Editable Word document (.docx)</option>
+                        <option value="docx_visual">Visual-fidelity Word (.docx)</option>
+                        <option value="xlsx">Excel workbook, tables only (.xlsx)</option>
+                    </select>
+                    <p class="hint">Visual-fidelity mode preserves images, unusual fonts, spacing and alignment as page images.</p>
+                </div>
+            </div>
+            <div class="actions">
+                <button id="submitBtn" type="submit">Convert PDF</button>
+                <button class="reset" id="resetBtn" type="button">Start over</button>
+            </div>
+            <div class="status" id="status" role="status" aria-live="polite"></div>
+        </form>
+    </div>
+    <aside class="side-stack" aria-label="Privacy information">
+        <div class="info-card">
+            <div class="info-icon" aria-hidden="true">&#10003;</div>
+            <h3>What happens to your file?</h3>
+            <ul class="feature-list">
+                <li>Files are processed on this computer.</li>
+                <li>Only PDF files are accepted and checked for damage.</li>
+                <li>Passwords are requested only when needed and never stored or logged.</li>
+                <li>Uploads and results are deleted as soon as the job finishes.</li>
+            </ul>
+        </div>
+    </aside>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='convert.js') }}"></script>{% endblock %}

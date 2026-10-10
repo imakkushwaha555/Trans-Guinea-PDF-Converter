@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#6f1738">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
+    <meta name="keywords" content="{{ keywords | default('PDF converter, merge PDF, split PDF, PDF to Word, PDF to Excel, offline, privacy, open source') }}">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Trans-Guinea PDF Converter contributors">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Trans-Guinea PDF Converter">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{ title }}">
+    <meta name="twitter:description" content="{{ description }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script type="application/ld+json">{{ {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Trans-Guinea PDF Converter",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Windows, macOS, Linux",
+        "description": description,
+        "url": canonical_url,
+        "isAccessibleForFree": true,
+        "license": "https://opensource.org/licenses/MIT",
+        "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}
+    } | tojson }}</script>
+</head>
+<body>
+<main class="page-shell">
+    <header class="topbar">
+        <a class="brand" href="{{ url_for('index') }}">
+            <div class="brand-mark" aria-hidden="true">T</div>
+            <div>
+                <p class="brand-name">Trans-Guinea PDF Converter</p>
+                <p class="brand-tagline">Free, open-source PDF tools that work offline</p>
+            </div>
+        </a>
+        <nav class="main-nav" aria-label="PDF tools">
+            {% for tool in tools %}
+            <a href="{{ tool.path }}"{% if request.path == tool.path %} aria-current="page"{% endif %}>{{ tool.title }}</a>
+            {% endfor %}
+        </nav>
+        <div class="privacy-badge">Private by design</div>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <footer>Your files are processed locally and removed as soon as the job finishes. Free and open source under the MIT license.</footer>
+</main>
+<dialog id="passwordDialog" aria-labelledby="passwordTitle">
+    <form method="dialog" id="passwordForm">
+        <h3 id="passwordTitle">Password required</h3>
+        <p id="passwordMessage">This PDF is protected. Enter its password to continue. It is used only for this job.</p>
+        <input id="password" type="password" autocomplete="off" aria-label="PDF password" required>
+        <p class="dialog-error" id="passwordError" role="alert"></p>
+        <div class="dialog-actions">
+            <button type="button" class="secondary" id="passwordCancel">Cancel</button>
+            <button type="submit" class="primary">Unlock</button>
+        </div>
+    </form>
+</dialog>
+<script src="{{ url_for('static', filename='common.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

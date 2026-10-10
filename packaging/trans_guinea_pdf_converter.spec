@@ -4,7 +4,10 @@ from PyInstaller.utils.hooks import collect_all, collect_submodules
 
 
 project_root = Path(SPECPATH).resolve().parent
-datas = [(str(project_root / "templates"), "templates")]
+datas = [
+    (str(project_root / "templates"), "templates"),
+    (str(project_root / "static"), "static"),
+]
 binaries = []
 hiddenimports = []
 

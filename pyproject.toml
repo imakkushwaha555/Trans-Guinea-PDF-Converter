@@ -5,12 +5,22 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "trans-guinea-pdf-converter"
 version = "0.1.0"
-description = "Private local PDF converter for converting PDF files to editable Word documents, visual-fidelity Word files, and Excel tables."
-keywords = ["pdf-converter", "pdf-to-word", "pdf-to-excel", "pdf2docx", "document-converter", "offline", "privacy", "windows"]
+description = "Free, open-source offline PDF tools: convert PDF to Word or Excel, merge PDFs and split PDFs by page. Private, local processing."
+keywords = ["pdf-converter", "pdf-to-word", "pdf-to-excel", "merge-pdf", "split-pdf", "pdf2docx", "document-converter", "offline", "privacy", "windows"]
 readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
 authors = [{ name = "Trans-Guinea PDF Converter contributors" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
+    "Framework :: Flask",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Office/Business",
+    "Topic :: Utilities",
+]
 dependencies = [
     "Flask>=3.1,<4",
     "pdf2docx>=0.5.8",
@@ -21,6 +31,10 @@ dependencies = [
     "PyMuPDF>=1.24,<2",
     "python-docx>=1.1,<2",
 ]
+
+[project.urls]
+Homepage = "https://github.com/imakkushwaha555/Trans-Guinea-PDF-Converter"
+Issues = "https://github.com/imakkushwaha555/Trans-Guinea-PDF-Converter/issues"
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10"]
@@ -34,4 +48,5 @@ testpaths = ["test_app.py"]
 addopts = "-q"
 
 [tool.setuptools]
-py-modules = ["app", "run"]
+py-modules = ["app", "run", "pdf_common"]
+packages = ["tools"]

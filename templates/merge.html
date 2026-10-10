@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% set title = "Merge PDF Files Free Offline | Trans-Guinea PDF Converter" %}
+{% set description = "Combine several PDF files into one document in the order you choose. Free, open source and offline. Password-protected PDFs are unlocked with a popup and nothing is stored." %}
+{% set keywords = "merge PDF, combine PDF, join PDF files, offline PDF merger, free PDF merge, privacy" %}
+{% block content %}
+<section class="hero" aria-labelledby="page-title">
+    <div>
+        <p class="eyebrow">Merge</p>
+        <h1 id="page-title">Combine PDFs into one.</h1>
+        <p class="hero-copy">Add two or more PDF files, arrange their order and download a single merged PDF. Protected files ask for their password in a popup.</p>
+    </div>
+    <aside class="hero-note">
+        <strong>Limits</strong>
+        <p>Up to 20 files, 25 MB each and 100 MB in total per merge.</p>
+    </aside>
+</section>
+
+<section class="workspace" aria-label="PDF merge workspace">
+    <div class="panel">
+        <div class="panel-header">
+            <div><p class="panel-kicker">Step 1</p><h2>Add your PDFs</h2></div>
+            <div class="step" aria-hidden="true">1</div>
+        </div>
+        <form id="mergeForm">
+            <label class="dropzone" id="dropzone" for="files">
+                <input id="files" type="file" accept="application/pdf,.pdf" multiple>
+                <div class="upload-content">
+                    <span class="upload-icon" aria-hidden="true">+</span>
+                    <strong>Drop your PDFs here</strong>
+                    <span>or click to browse &middot; you can add more at any time</span>
+                </div>
+            </label>
+            <ol class="file-list" id="fileList" aria-label="Files to merge"></ol>
+            <div class="actions">
+                <button id="submitBtn" type="submit">Merge PDFs</button>
+                <button class="reset" id="resetBtn" type="button">Start over</button>
+            </div>
+            <div class="status" id="status" role="status" aria-live="polite"></div>
+        </form>
+    </div>
+    <aside class="side-stack" aria-label="Privacy information">
+        <div class="info-card">
+            <div class="info-icon" aria-hidden="true">&#10003;</div>
+            <h3>What happens to your files?</h3>
+            <ul class="feature-list">
+                <li>Files are merged on this computer.</li>
+                <li>Every file is checked for damage first.</li>
+                <li>Passwords are asked for one file at a time, only when needed.</li>
+                <li>Uploads and the merged result are deleted as soon as the job finishes.</li>
+            </ul>
+        </div>
+    </aside>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='merge.js') }}"></script>{% endblock %}
