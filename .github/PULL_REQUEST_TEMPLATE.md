@@ -21,6 +21,7 @@
 - [ ] `python -m pytest`
 - [ ] I tested the relevant workflow manually, if applicable.
 - [ ] I updated documentation or tests where needed.
+- [ ] Attribution preserved: I credited IMakKushwaha and contributors per Rule 3B; contributor credits provisioned; LICENSE/NOTICE/AUTHORS.md intact.
 
 ## Accessibility review
 

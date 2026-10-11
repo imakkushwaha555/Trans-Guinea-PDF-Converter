@@ -3,6 +3,7 @@
 ## Copyright holder
 
 The original Trans-Guinea PDF Converter project is copyright **IMakKushwaha**.
+Author / Publisher: IMakKushwaha
 
 ## Contributor credit
 

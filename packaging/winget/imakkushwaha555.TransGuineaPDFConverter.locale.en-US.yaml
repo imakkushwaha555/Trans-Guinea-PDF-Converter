@@ -1,3 +1,7 @@
+We need parse original and apply edit. Original is YAML manifest. Suggested edit indicates change PackageVersion? Wait suggested edit shows PackageVersion: 0.1.1 unchanged, Publisher changed to IMakKushwaha, PublisherUrl unchanged, PackageName unchanged. But original Publisher is "Trans-Guinea PDF Converter contributors". So replace that line. Also maybe PackageVersion line present; we keep. Let's produce complete modified file with Publisher: IMakKushwaha. Ensure comments? There is a comment line at top: # yaml-language-server... Keep. Replace Publisher line. Also check if any other changes: Suggested edit snippet includes "// ... existing code ..." which is pseudo. So only change Publisher value. Let's output exact original with Publisher modified.
+
+Original:
+
 # yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.6.0.schema.json
 PackageIdentifier: imakkushwaha555.TransGuineaPDFConverter
 PackageVersion: 0.1.1
@@ -17,3 +21,26 @@ Tags:
 - offline
 ManifestType: defaultLocale
 ManifestVersion: 1.6.0
+
+Replace Publisher line.
+
+Let's do it.# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.6.0.schema.json
+PackageIdentifier: imakkushwaha555.TransGuineaPDFConverter
+PackageVersion: 0.1.1
+PackageLocale: en-US
+Publisher: IMakKushwaha
+PublisherUrl: https://github.com/imakkushwaha555
+PackageName: Trans-Guinea PDF Converter
+PackageUrl: https://github.com/imakkushwaha555/trans-guinea-pdf-converter
+License: MIT
+LicenseUrl: https://github.com/imakkushwaha555/trans-guinea-pdf-converter/blob/main/LICENSE
+ShortDescription: Free, offline PDF tools - convert to Word or Excel, merge and split.
+Tags:
+- pdf
+- pdf-converter
+- merge-pdf
+- split-pdf
+- offline
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0
+
