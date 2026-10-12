@@ -56,6 +56,7 @@ The app opens in its own window (use `python run.py --browser` to open it in you
 
 ```bash
 python -m pip install .
+# For installed package from PyPI: python -m pip install trans-guinea-pdf-converter==0.1.2
 trans-guinea-pdf-converter
 ```
 
@@ -68,11 +69,11 @@ python -m pytest
 
 ## Windows distribution
 
-End users do not need Python or the packages in `requirements.txt` when using a release build. The Windows release bundles the Python runtime and application dependencies into a PyInstaller build, then packages it with an Inno Setup installer.
+End users do not need Python or the packages in `requirements.txt` when using a release build. The Windows release bundles the Python runtime and application dependencies into a PyInstaller build, then packages it with an NSIS installer.
 
 ### Build locally on Windows
 
-Install Python 3.11 or newer and Inno Setup, then run PowerShell from the project root:
+Install Python 3.11 or newer and NSIS, then run PowerShell from the project root:
 
 ```powershell
 .\packaging\build_windows.ps1

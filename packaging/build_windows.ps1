@@ -19,17 +19,17 @@ $zipPath = Join-Path $releaseDir "Trans-Guinea-PDF-Converter-$version-portable.z
 if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 Compress-Archive -Path (Join-Path $projectRoot "dist\Trans-Guinea PDF Converter\*") -DestinationPath $zipPath
 
-$iscc = Get-Command iscc.exe -ErrorAction SilentlyContinue
-$isccPath = $null
-if ($iscc) { $isccPath = $iscc.Source }
+$makensis = Get-Command makensis.exe -ErrorAction SilentlyContinue
+$makensisPath = $null
+if ($makensis) { $makensisPath = $makensis.Source }
 else {
-    $candidates = @("$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe", "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe", "$env:ProgramFiles\Inno Setup 6\ISCC.exe")
-    $isccPath = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+    $candidates = @("$env:LOCALAPPDATA\Programs\NSIS\makensis.exe", "${env:ProgramFiles(x86)}\NSIS\makensis.exe", "$env:ProgramFiles\NSIS\makensis.exe")
+    $makensisPath = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
 }
-if ($isccPath) {
-    & $isccPath "/DMyAppVersion=$version" (Join-Path $projectRoot "packaging\Trans-Guinea-PDF-Converter.iss")
+if ($makensisPath) {
+    & $makensisPath "/DMyAppVersion=$version" (Join-Path $projectRoot "packaging\Trans-Guinea-PDF-Converter.nsi")
 } else {
-    Write-Warning "Inno Setup is not installed; portable ZIP was created but the installer was skipped."
+    Write-Warning "NSIS is not installed; portable ZIP was created but the installer was skipped."
 }
 
 Get-ChildItem $releaseDir -File | Where-Object { $_.Name -ne "SHA256SUMS.txt" } | ForEach-Object {
